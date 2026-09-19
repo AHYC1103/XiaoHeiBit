@@ -1,0 +1,83 @@
+💾 chain.db 就绪 | XiaoHeiBit API: http://0.0.0.0:8222
+🔒 仅本机访问, 不暴露公网; 私钥绝不出后端
+ * Serving Flask app 'api'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8222
+ * Running on http://172.19.0.1:8222
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [19/Sep/2026 16:54:47] "POST /api/wallet/export HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:58] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:58] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:58] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:59] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:59] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:59] "GET /api/validate HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:54:59] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:00] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:00] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:00] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:00] "[36mGET / HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:00] "[33mGET /jsqr.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/scan.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/chevron-down.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/search.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/send.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/buy.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/qrcode.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/swap.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/wallet.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/history.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "[36mGET /ico/settings.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "GET /api/validate HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:01] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:02] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:02] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:02] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:03] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:03] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:03] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:04] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:04] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:04] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "POST /api/wallet/export HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:06] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:07] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:07] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:07] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:08] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:08] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:08] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:09] "POST /api/wallet/export HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:09] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:09] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:09] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:10] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:10] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:10] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:11] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:11] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:11] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:12] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:12] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:12] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:13] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:13] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:13] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:16] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:16] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:16] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:16] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:16] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:16] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:17] "GET /api/status HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:17] "GET /api/wallets HTTP/1.1" 200 -
+127.0.0.1 - - [19/Sep/2026 16:55:17] "GET /api/txs/22cd4e13ce5f61af HTTP/1.1" 200 -

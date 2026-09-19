@@ -1,0 +1,17 @@
+{
+  "current": 0,
+  "wallets": [
+    {
+      "name": "这才对劲嘛",
+      "private_key_hex": "4f6a6abd557311e14888348fb6e501bd3218dba3e988a7acfb07e19024d96a71",
+      "created_at": 1789759116,
+      "icon": "🎮"
+    },
+    {
+      "name": "钱包#4",
+      "private_key_hex": "892717fc925bc53e515276794d63c7903a36425e56e99c1784225ae3434e81df",
+      "created_at": 1789807109,
+      "icon": "🔥"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "webui_host": "0.0.0.0",
+  "webui_allow_lan": true,
+  "webui_port": 8222
+}
