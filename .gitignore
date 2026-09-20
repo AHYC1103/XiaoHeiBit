@@ -1,0 +1,14 @@
+# 私钥/钱包（绝不上传）
+wallets.json
+# 链数据
+chain.db
+chain.db-shm
+chain.db-wal
+# 缓存/临时
+tmp/
+__pycache__/
+*.pyc
+# 备份
+*.bak
+*.bak/
+run.pid

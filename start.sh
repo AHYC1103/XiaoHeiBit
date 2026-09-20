@@ -1,11 +1,18 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# XiaoHeiBit 一键启动
-cd ~/xiaoheibit
-echo "======== 卡卡的很正常 ========"
-if ! python3 -c "import ecdsa" 2>/dev/null; then echo "[*] 安装 ecdsa..."; pip install ecdsa; fi
-if ! python3 -c "import flask" 2>/dev/null; then echo "[*] 安装 flask..."; pip install flask; fi
-python3 -c "import core; c=core.init_db(); core.ensure_genesis(c, core.load_config()); c.close()"
-echo "[*] WebUI: http://127.0.0.1:8222 (仅本机)"
-echo "[*] 后端: api.py | 前端: webui.html"
-echo "[*] Ctrl+C 停止"
-exec python3 api.py
+cd "$(dirname "$0")"
+PIDFILE=tmp/run.pid
+# 停旧进程
+[ -f "$PIDFILE" ] && kill -9 "$(cat "$PIDFILE")" 2>/dev/null
+pkill -9 -f 'main.py' 2>/dev/null
+sleep 1
+mkdir -p tmp
+# 启动，日志进 tmp/server.log
+nohup python3 main.py > tmp/server.log 2>&1 &
+echo $! > "$PIDFILE"
+sleep 2
+PORT=$(python3 -c "import json;print(json.load(open('config.json'))['webui_port'])" 2>/dev/null || echo 8222)
+if curl -s "http://127.0.0.1:$PORT/api/status" >/dev/null; then
+  echo "[OK] XiaoHeiBit 主链 http://127.0.0.1:$PORT  pid=$(cat "$PIDFILE")"
+else
+  echo "[!] 启动异常, 最近日志:"; tail -8 tmp/server.log
+fi

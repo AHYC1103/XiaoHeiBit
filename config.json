@@ -1,5 +1,18 @@
 {
-  "webui_host": "0.0.0.0",
-  "webui_allow_lan": true,
-  "webui_port": 8222
+  "_注释": {
+    "webui_host": "监听地址，127.0.0.1=仅本机APP访问",
+    "webui_port": "端口，主链=8222",
+    "difficulty": "挖矿难度，越大越难越稀缺",
+    "miner_reward": "每个块的挖矿奖励，当前10",
+    "auto_mine": "true=自动挖矿",
+    "refresh_interval_ms": "前端刷新间隔毫秒",
+    "tx_fee": "每笔交易手续费"
+  },
+  "webui_host": "127.0.0.1",
+  "webui_port": 8222,
+  "difficulty": 5,
+  "miner_reward": 10,
+  "auto_mine": true,
+  "refresh_interval_ms": 1000,
+  "tx_fee": 1
 }

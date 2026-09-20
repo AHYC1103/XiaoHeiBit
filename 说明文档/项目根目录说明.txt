@@ -1,0 +1,32 @@
+XiaoHeiBit 小黑币 · 主节点说明
+================================
+
+【是什么】本地私有链钱包后端，Flask 提供 HTTP API + webui。
+【主链】目录 ~/xiaoheibit/  端口 8222（正式主网）
+【旧备份】~/xiaoheibit.bak（旧主网）、~/xiaoheibit测试.bak（旧测试网，已废弃）
+
+【启动】
+  cd ~/xiaoheibit && bash start.sh
+  （自动停旧进程、起服务、健康检查，日志在 tmp/server.log，PID 在 run.pid）
+【停止】
+  bash start.sh 会自动先停旧进程；或 kill $(cat run.pid)
+
+【目录结构】
+  main.py         入口，读 config.json 起 Flask
+  config.json     端口/难度/奖励/手续费等
+  chain.db        链数据库（SQLite），删了即重新创世
+  wallets.json    钱包私钥/助记词（重要，勿删）
+  core/           核心：blockchain/wallet/transaction/nft/api
+  webui/          网页前端
+  ico/            图标素材
+  tmp/            缓存/日志（server.log、APK、icon）
+
+【配置项 config.json】
+  webui_host / webui_port   监听地址端口
+  difficulty                挖矿难度（当前 5）
+  miner_reward             出块奖励（当前 50）
+  auto_mine                是否自动挖矿
+  tx_fee                   交易手续费
+
+【接口】见 API.md
+【历史】见 历史交接记录.md

@@ -28,8 +28,8 @@ _conn = None
 _cfg = None
 _interrupt_flag = threading.Event()
 _thread_local = threading.local()
-HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "webui.html")
-ICO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ico")
+HTML_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "webui", "webui.html")
+ICO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "ico")
 
 
 def get_conn():
@@ -74,7 +74,7 @@ def serve_ico(filename):
 
 @app.route("/jsqr.js")
 def serve_jsqr():
-    return send_file("/data/data/com.termux/files/home/xiaoheibit/jsqr.js", mimetype="application/javascript")
+    return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "webui", "jsqr.js"), mimetype="application/javascript")
 
 
 # ---------------- API ----------------
@@ -123,7 +123,9 @@ def api_txs(addr):
     a, err = check_addr(addr)
     if err:
         return jsonify({"error": err}), 400
-    return jsonify(core.get_tx_history(get_conn(), a))
+    page = request.args.get('page', 1, type=int)
+    size = request.args.get('size', 20, type=int)
+    return jsonify(core.get_tx_history(get_conn(), a, page, size))
 
 
 @app.route("/api/mempool")
@@ -139,9 +141,25 @@ def api_wallets():
 
 @app.route("/api/wallet/create", methods=["POST"])
 def api_wallet_create():
+    d = request.get_json(silent=True) or {}
     n = len(core._wallet_data().get("wallets", [])) + 1
-    w = core.create_wallet(f"钱包#{n}")
-    return jsonify({"address": w.address, "public_key": w.public_key_hex, "name": w.name})
+    name = str(d.get("name", f"钱包#{n}"))[:20]
+    wallet_type = str(d.get("type", "random"))  # random=随机私钥, mnemonic=助记词
+    
+    if wallet_type == "mnemonic":
+        result = core.create_wallet_with_mnemonic(name)
+        w = result["wallet"]
+        mnemonic = result["mnemonic"]
+        return jsonify({
+            "address": w.address, 
+            "public_key": w.public_key_hex, 
+            "name": name,
+            "mnemonic": mnemonic,
+            "type": "mnemonic"
+        })
+    else:
+        w = core.create_wallet(name)
+        return jsonify({"address": w.address, "public_key": w.public_key_hex, "name": name, "type": "random"})
 
 @app.route("/api/wallet/rename", methods=["POST"])
 def api_wallet_rename():
@@ -218,12 +236,19 @@ def api_transfer():
 @app.route("/api/wallet/import", methods=["POST"])
 def api_wallet_import():
     d = request.get_json(silent=True) or {}
-    priv = str(d.get("private_key", "")).strip()
     name = str(d.get("name", "导入钱包"))[:20]
-    if not priv: return jsonify({"error":"私钥不能为空"}), 400
+    wallet_type = str(d.get("type", "private_key"))  # private_key=私钥, mnemonic=助记词
+    
     try:
-        w = core.import_wallet(priv, name)
-        return jsonify({"address": w.address})
+        if wallet_type == "mnemonic":
+            mnemonic = str(d.get("mnemonic", "")).strip()
+            if not mnemonic: return jsonify({"error":"助记词不能为空"}), 400
+            w = core.import_wallet_with_mnemonic(mnemonic, name)
+        else:
+            priv = str(d.get("private_key", "")).strip()
+            if not priv: return jsonify({"error":"私钥不能为空"}), 400
+            w = core.import_wallet(priv, name)
+        return jsonify({"address": w.address, "type": wallet_type})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
@@ -231,11 +256,20 @@ def api_wallet_import():
 @app.route("/api/wallet/export", methods=["POST"])
 def api_wallet_export():
     d = request.get_json(silent=True) or {}
+    export_type = str(d.get("type", "private_key"))  # private_key=私钥, mnemonic=助记词
     try:
         idx = int(d.get("index", -1))
         data = core._wallet_data()
-        priv = data["wallets"][idx]["private_key_hex"]
-        return jsonify({"private_key": priv})
+        wallet_data = data["wallets"][idx]
+        
+        if export_type == "mnemonic":
+            mnemonic = wallet_data.get("mnemonic", "")
+            if not mnemonic:
+                return jsonify({"error": "该钱包没有保存助记词（可能是随机创建的钱包）"}), 400
+            return jsonify({"mnemonic": mnemonic})
+        else:
+            priv = wallet_data["private_key_hex"]
+            return jsonify({"private_key": priv})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
@@ -262,6 +296,63 @@ def api_mine():
 def api_validate():
     ok, msg = core.validate_chain(get_conn(), cfg())
     return jsonify({"valid": ok, "message": msg})
+
+
+# ===== NFT 路由（独立模块 core/nft.py） =====
+import core.nft as nft_mod
+
+@app.route("/api/nft/list")
+def api_nft_list():
+    addr = core.get_current_wallet().address if core.get_current_wallet() else None
+    if not addr: return jsonify({"error": "无钱包"}), 400
+    items = nft_mod.list_nfts_by_owner(get_conn(), addr)
+    return jsonify({"nfts": items})
+
+@app.route("/api/nft/mint", methods=["POST"])
+def api_nft_mint():
+    d = request.get_json(silent=True) or {}
+    name = d.get("name","").strip()
+    cid = d.get("cid","").strip()
+    supply = int(d.get("supply",1))
+    desc = d.get("description","")
+    if not name or not cid: return jsonify({"error":"名称和CID必填"}),400
+    w = core.get_current_wallet()
+    if not w: return jsonify({"error":"无钱包"}),400
+    nft = nft_mod.mint_nft(get_conn(), w.address, name, cid, supply, desc)
+    return jsonify({"ok": True, "nft": nft})
+
+@app.route("/api/nft/send", methods=["POST"])
+def api_nft_send():
+    d = request.get_json(silent=True) or {}
+    nft_id = int(d.get("id",0))
+    w = core.get_current_wallet()
+    if not w: return jsonify({"error":"无钱包"}),400
+    code, nft = nft_mod.create_transfer_code(get_conn(), nft_id, w.address)
+    if not code: return jsonify({"error": nft}), 400
+    return jsonify({"ok": True, "code": code, "nft": nft})
+
+@app.route("/api/nft/recv", methods=["POST"])
+def api_nft_recv():
+    d = request.get_json(silent=True) or {}
+    code = d.get("code","").strip()
+    w = core.get_current_wallet()
+    if not w: return jsonify({"error":"无钱包"}),400
+    ok, nft = nft_mod.confirm_transfer(get_conn(), code, w.address)
+    if not ok: return jsonify({"error": nft}), 400
+    return jsonify({"ok": True, "nft": nft})
+
+@app.route("/api/nft/transfer", methods=["POST"])
+def api_nft_transfer():
+    """直接地址转账，不需要一次性码"""
+    d = request.get_json(silent=True) or {}
+    nft_id = int(d.get("id",0))
+    to_addr = d.get("to","").strip()
+    w = core.get_current_wallet()
+    if not w: return jsonify({"error":"无钱包"}),400
+    if not to_addr: return jsonify({"error":"对方地址必填"}),400
+    ok, nft = nft_mod.transfer_nft(get_conn(), nft_id, w.address, to_addr)
+    if not ok: return jsonify({"error": nft}), 400
+    return jsonify({"ok": True, "nft": nft})
 
 
 def main():

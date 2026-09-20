@@ -2,16 +2,10 @@
   "current": 0,
   "wallets": [
     {
-      "name": "这才对劲嘛",
-      "private_key_hex": "4f6a6abd557311e14888348fb6e501bd3218dba3e988a7acfb07e19024d96a71",
-      "created_at": 1789759116,
-      "icon": "🎮"
-    },
-    {
-      "name": "钱包#4",
-      "private_key_hex": "892717fc925bc53e515276794d63c7903a36425e56e99c1784225ae3434e81df",
-      "created_at": 1789807109,
-      "icon": "🔥"
+      "name": "助记词钱包",
+      "private_key_hex": "33f0d9b3e5bdbf05c645a216eb292426fb90bb93a3eaa99e18b6ee1d687bb2a2",
+      "mnemonic": "powder more narrow skate comfort city baby hole parrot theory security staff",
+      "created_at": 1789927665
     }
   ]
 }
