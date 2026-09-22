@@ -1,11 +1,17 @@
 {
-  "current": 0,
+  "current": 1,
   "wallets": [
     {
       "name": "助记词钱包",
       "private_key_hex": "33f0d9b3e5bdbf05c645a216eb292426fb90bb93a3eaa99e18b6ee1d687bb2a2",
       "mnemonic": "powder more narrow skate comfort city baby hole parrot theory security staff",
       "created_at": 1789927665
+    },
+    {
+      "name": "助记词钱包",
+      "private_key_hex": "21a0b0c18e13b2fed7a1e4efcd4bd9f26d9b2b6e50e4cfdbaa45a7a98e35e749",
+      "mnemonic": "vicious blur awesome leader prison that divide cluster fantasy neutral hammer female",
+      "created_at": 1790009852
     }
   ]
 }
