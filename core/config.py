@@ -4,7 +4,11 @@ import json
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DB_FILE = BASE_DIR / "chain.db"
+# 拆分后的多个 .db 文件
+CHAIN_DB = BASE_DIR / "chain.db"        # blocks
+TRANSFER_DB = BASE_DIR / "transfer.db"  # transactions + mempool
+NFT_DB = BASE_DIR / "nft.db"            # nfts + nft_transfer_codes
+DB_FILE = CHAIN_DB
 WALLETS_FILE = BASE_DIR / "wallets.json"
 CONFIG_FILE = BASE_DIR / "config.json"
 TMP_DIR = BASE_DIR / "tmp"

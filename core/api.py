@@ -65,19 +65,27 @@ def check_count(raw):
 
 @app.route("/")
 def index():
-    return send_file(HTML_PATH)
+    return jsonify({"service": "XiaoHeiBit API", "docs": "/api/status"})
 
-
-@app.route("/ico/<path:filename>")
-def serve_ico(filename):
-    return send_from_directory(ICO_DIR, filename)
-
-@app.route("/jsqr.js")
-def serve_jsqr():
-    return send_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "webui", "jsqr.js"), mimetype="application/javascript")
 
 
 # ---------------- API ----------------
+
+@app.route("/api/config")
+def api_config():
+    c = cfg()
+    return jsonify({
+        "tron_nodes": c.get("tron_nodes", []),
+        "bsc_nodes": c.get("bsc_nodes", []),
+        "rates": c.get("rates", {}),
+        "fixed_fees": c.get("fixed_fees", {}),
+        "fee_thresholds": c.get("fee_thresholds", {}),
+        "fee_owner_trx": c.get("fee_owner_trx", ""),
+        "fee_owner_bnb": c.get("fee_owner_bnb", "")
+    })
+
+
+
 @app.route("/api/status")
 def api_status():
     conn, c = get_conn(), cfg()
@@ -233,6 +241,52 @@ def api_transfer():
     return jsonify({"ok": True, "sender": wallet.address, "receiver": receiver, "amount": amount, "auto_mining": True})
 
 
+@app.route("/api/transfer_signed", methods=["POST"])
+def api_transfer_signed():
+    """APP 本地签名版：服务端只验签，不存私钥。"""
+    d = request.get_json(silent=True) or {}
+    try:
+        sender = str(d.get("sender", "")).lower()
+        receiver, err = check_addr(str(d.get("receiver", "")).lower())
+        if err:
+            return jsonify({"error": err}), 400
+        amount = int(d.get("amount"))
+        if amount <= 0:
+            return jsonify({"error": "金额必须为正整数"}), 400
+        nonce = int(d.get("nonce"))
+        ts = int(d.get("timestamp"))
+        sig = str(d.get("signature", ""))
+        pub = str(d.get("public_key", ""))
+    except (TypeError, ValueError):
+        return jsonify({"error": "参数不完整"}), 400
+    if not sender or not sig or not pub:
+        return jsonify({"error": "缺少签名或公钥"}), 400
+    # 公钥推导地址必须等于 sender
+    from core.wallet import address_from_public_key, verify_signature
+    try:
+        derived = address_from_public_key(pub)
+    except Exception:
+        return jsonify({"error": "公钥无效"}), 400
+    if derived != sender:
+        return jsonify({"error": "地址与公钥不匹配"}), 400
+    msg = f"{sender}|{receiver}|{amount}|{nonce}|{ts}"
+    if not verify_signature(pub, msg, sig):
+        return jsonify({"error": "签名验证失败"}), 400
+    tx = {"sender": sender, "receiver": receiver, "amount": amount, "nonce": nonce,
+          "signature": sig, "public_key": pub, "timestamp": ts}
+    err = core.add_transaction(get_conn(), tx, cfg())
+    if err:
+        return jsonify({"error": err}), 400
+    # 自动后台挖一个块
+    import threading
+    def _auto_mine():
+        try:
+            core.mine_blocks(get_conn(), 1, sender, cfg(), interrupt=lambda: False)
+        except: pass
+    threading.Thread(target=_auto_mine, daemon=True).start()
+    return jsonify({"ok": True, "sender": sender, "receiver": receiver, "amount": amount})
+
+
 @app.route("/api/wallet/import", methods=["POST"])
 def api_wallet_import():
     d = request.get_json(silent=True) or {}
@@ -280,16 +334,17 @@ def api_mine():
     n, err = check_count(d.get("count", 1))
     if err:
         return jsonify({"error": err}), 400
-    wallet = core.get_current_wallet()
-    if not wallet:
-        return jsonify({"error": "没有当前钱包, 无法领取挖矿奖励"}), 400
+    # 挖矿奖励地址由 APP 传（本地钱包）
+    miner = str(d.get("address", "")).lower().strip()
+    if len(miner) != 16:
+        return jsonify({"error": "请先导入/创建钱包"}), 400
     _interrupt_flag.clear()
-    result = core.mine_blocks(get_conn(), n, wallet.address, cfg(),
+    result = core.mine_blocks(get_conn(), n, miner, cfg(),
                               interrupt=lambda: _interrupt_flag.is_set())
     if result.get("error"):
         return jsonify({"error": result["error"]}), 500
-    return jsonify({"mined": result["mined"], "miner": wallet.address,
-                    "balance": core.get_balance(get_conn(), wallet.address)})
+    return jsonify({"mined": result["mined"], "miner": miner,
+                    "balance": core.get_balance(get_conn(), miner)})
 
 
 @app.route("/api/validate")

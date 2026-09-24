@@ -2,7 +2,8 @@
 """XiaoHeiBit 核心包：re-export 所有公开接口"""
 import sqlite3
 from .config import (
-    BASE_DIR, DB_FILE, WALLETS_FILE, CONFIG_FILE, TMP_DIR,
+    BASE_DIR, DB_FILE, CHAIN_DB, TRANSFER_DB, NFT_DB,
+    WALLETS_FILE, CONFIG_FILE, TMP_DIR,
     DIFFICULTY, MINER_REWARD, INITIAL_SUPPLY, INITIAL_OWNER, ADDR_HEX_LEN,
     default_config, load_config,
 )
@@ -25,13 +26,17 @@ from .migrate import migrate_from_json
 
 
 def init_db() -> sqlite3.Connection:
-    """打开 chain.db, 建表(缺则建), 开启安全PRAGMA"""
-    conn = sqlite3.connect(str(DB_FILE))
+    """打开 chain.db, ATTACH transfer.db 和 nft.db, 建表"""
+    conn = sqlite3.connect(str(CHAIN_DB))
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA synchronous=NORMAL;")
     conn.execute("PRAGMA foreign_keys=ON;")
     conn.row_factory = sqlite3.Row
+    # ATTACH 其他两个 db
+    conn.execute(f"ATTACH DATABASE '{TRANSFER_DB}' AS transfer")
+    conn.execute(f"ATTACH DATABASE '{NFT_DB}' AS nft")
     cur = conn.cursor()
+    # blocks 在 main (chain.db)
     cur.executescript("""
     CREATE TABLE IF NOT EXISTS blocks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,8 +48,10 @@ def init_db() -> sqlite3.Connection:
     );
     CREATE INDEX IF NOT EXISTS idx_height ON blocks(height);
     CREATE INDEX IF NOT EXISTS idx_blockhash ON blocks(block_hash);
-
-    CREATE TABLE IF NOT EXISTS transactions (
+    """)
+    # transactions + mempool 在 transfer schema (transfer.db)
+    cur.executescript("""
+    CREATE TABLE IF NOT EXISTS transfer.transactions (
         tx_id INTEGER PRIMARY KEY AUTOINCREMENT,
         block_height INTEGER NOT NULL,
         sender TEXT NOT NULL,
@@ -53,13 +60,12 @@ def init_db() -> sqlite3.Connection:
         nonce INTEGER,
         signature TEXT NOT NULL,
         public_key TEXT,
-        timestamp INTEGER NOT NULL,
-        FOREIGN KEY(block_height) REFERENCES blocks(height)
+        timestamp INTEGER NOT NULL
     );
-    CREATE INDEX IF NOT EXISTS idx_tx_sender ON transactions(sender);
-    CREATE INDEX IF NOT EXISTS idx_tx_receiver ON transactions(receiver);
+    CREATE INDEX IF NOT EXISTS transfer.idx_tx_sender ON transactions(sender);
+    CREATE INDEX IF NOT EXISTS transfer.idx_tx_receiver ON transactions(receiver);
 
-    CREATE TABLE IF NOT EXISTS mempool (
+    CREATE TABLE IF NOT EXISTS transfer.mempool (
         mp_id INTEGER PRIMARY KEY AUTOINCREMENT,
         sender TEXT NOT NULL,
         receiver TEXT NOT NULL,
