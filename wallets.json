@@ -1,0 +1,10 @@
+{
+  "current": 0,
+  "wallets": [
+    {
+      "name": "兑换池",
+      "private_key_hex": "d1f8044c6c5a20c4a84833d4481d296af083e5ae3abef3d70cab8978e21ba528",
+      "created_at": 1790252972
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+@app.route("/api/swap", methods=["POST"])
+def api_swap():
+    d = request.get_json(silent=True) or {}
+    try:
+        to_addr = str(d.get("to_address", "")).lower()
+        amount = int(d.get("amount"))
+    except (TypeError, ValueError):
+        return jsonify({"error": "参数不完整"}), 400
+    if amount <= 0:
+        return jsonify({"error": "金额必须为正"}), 400
+    pool_addr = cfg().get("swap_pool_address", "")
+    pool_priv = cfg().get("swap_pool_private_key", "")
+    pool_pub = cfg().get("swap_pool_public_key", "")
+    if not pool_addr or not pool_priv:
+        return jsonify({"error": "兑换池未配置"}), 500
+    pool_bal = core.get_balance(get_conn(), pool_addr)
+    if pool_bal < amount:
+        return jsonify({"error": "兑换池XHB不足(剩余%d)" % pool_bal}), 400
+    from core.wallet import Wallet
+    w = Wallet(pool_priv)
+    nonce = int(time.time() * 1000)
+    ts = int(time.time())
+    msg = "%s|%s|%d|%d|%d" % (pool_addr, to_addr, amount, nonce, ts)
+    sig = w.sign(msg)
+    tx = {"sender": pool_addr, "receiver": to_addr, "amount": amount, "nonce": nonce,
+          "signature": sig, "public_key": pool_pub, "timestamp": ts}
+    err = core.add_transaction(get_conn(), tx, cfg())
+    if err:
+        return jsonify({"error": err}), 400
+    import threading
+    def _auto_mine():
+        try:
+            core.mine_blocks(get_conn(), 1, pool_addr, cfg(), interrupt=lambda: False)
+        except: pass
+    threading.Thread(target=_auto_mine, daemon=True).start()
+    return jsonify({"ok": True, "receiver": to_addr, "amount": amount})
+
+

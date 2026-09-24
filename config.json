@@ -1,0 +1,54 @@
+{
+  "_使用说明": "所有_开头的字段都是注释，程序忽略。改下面的数值即可，改完重启生效。",
+  "_difficulty": "挖矿难度，数字越大越慢，5=正常",
+  "_miner_reward": "每个区块挖矿奖励(个XHB)",
+  "_auto_mine": "自动挖矿 true=开 false=关",
+  "_refresh_interval_ms": "出块间隔(毫秒)，1000=1秒",
+  "_tx_fee": "XHB本链转账网络手续费(个XHB)",
+  "_tron_nodes": "TRON公链节点列表，多节点自动fallback",
+  "_bsc_nodes": "BSC公链节点列表",
+  "_rates": "汇率(人民币¥)，改了APP刷新生效",
+  "_fixed_fees": "APP每笔发送多收的隐藏手续费(个币)，测试期设最小",
+  "_fee_thresholds": "多收累计达到多少自动转到fee_owner",
+  "_fee_owner_trx": "TRX/TRC20归集到这个地址(以T开头)",
+  "_fee_owner_bnb": "BNB归集到这个地址(0x开头)",
+  "_swap_pool": "兑换池：其他币换XHB时从这里转出，需要往此地址充XHB",
+  "difficulty": 1,
+  "miner_reward": 1000000000,
+  "auto_mine": true,
+  "refresh_interval_ms": 750,
+  "tx_fee": 1,
+  "tron_nodes": [
+    "https://api.trongrid.io",
+    "https://api.frankfurt.trongrid.io",
+    "https://tron-rpc.publicnode.com",
+    "https://api.tronstack.io"
+  ],
+  "bsc_nodes": [
+    "https://bsc-rpc.publicnode.com",
+    "https://rpc.ankr.com/bsc",
+    "https://bsc.meowrpc.com",
+    "https://1rpc.io/bnb"
+  ],
+  "rates": {
+    "XHB": 1.0,
+    "TRX": 2.31,
+    "BNB": 5344.65,
+    "USDT": 6.72
+  },
+  "fixed_fees": {
+    "TRX": 1e-05,
+    "BNB": 1e-05,
+    "USDT": 1e-05
+  },
+  "fee_thresholds": {
+    "TRX": 10.0,
+    "BNB": 0.001,
+    "USDT": 5.0
+  },
+  "fee_owner_trx": "TAqcjs9am3mq9hNZYMZUrfbXoL3fALao6y",
+  "fee_owner_bnb": "0x84d111bC00B315bc6E733730240A363F02F984C9",
+  "swap_pool_address": "9146d868b9bb85a5",
+  "swap_pool_private_key": "d1f8044c6c5a20c4a84833d4481d296af083e5ae3abef3d70cab8978e21ba528",
+  "swap_pool_public_key": "37d9152d5b80ae7e414612e6c9854c518ff674a59e3e31de63ea68bfe25827c7d66c8af0f75ecaa4c427b0fc469658ff609ddbd74fb6f7af153f686494cb4da5"
+}
