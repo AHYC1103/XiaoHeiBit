@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.2.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+    }
+}
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+android {
+    namespace "com.xiaoheibit.wallets"
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.xiaoheibit.wallets"
+        minSdk 26
+        targetSdk 34
+        versionCode 216
+        versionName "v2026.10.01-10"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "arm64-v8a", "armeabi-v7a"
+            universalApk true
+        }
+    }
+}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+    implementation "com.google.zxing:core:3.5.3"
+    implementation("org.bitcoinj:bitcoinj-core:0.16.1") {
+        exclude group: 'org.bouncycastle'
+    }
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    implementation "com.reown:walletkit:1.0.3"
+    implementation "com.reown:android-core:1.0.3"
+    implementation "com.caverock:androidsvg-aar:1.4"
+}
