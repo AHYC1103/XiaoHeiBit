@@ -1,77 +1,127 @@
-# 小黑币钱包 · 原生安卓 APP 交接说明
+# 小黑币钱包 · 原生安卓 APP 说明文档
 
-> 纯原生 Android（Kotlin + framework），**无 WebView 套壳**，UI 按 `webui/webui.html` 1:1 复刻。
-> 与 webui 一样直接调用后端 HTTP API（钱包/签名在服务端）。
+> 纯原生 Android（Kotlin + framework），**无 WebView 套壳**。私钥存 APP 私有目录，服务端仅验签。
+> 当前版本：**v2026.10.01-10**（versionCode 216）
 
 ## 基本信息
 - APP 名：小黑币钱包
-- 包名：`com.xiaoheibit.wallets`（末尾带 s）
-- minSdk 26 / targetSdk 34，**无 AndroidX**，仅 arm64-v8a
-- 依赖：kotlin-stdlib、com.google.zxing:core（仅扫码解码）
-- 默认连测试网 `http://192.168.1.254:8234`（真机用局域网地址，不能用 127.0.0.1）
-- release 包约 **328 KB**（R8 + 资源压缩，debug 签名可直接安装）
+- 包名：`com.xiaoheibit.wallets`
+- minSdk 26 / targetSdk 34 / compileSdk 34
+- 多架构：arm64-v8a（18MB）、armeabi-v7a（17MB）、universal（28MB）
+- 默认连公开主链 `http://cn-hk-bgp-4.ofalias.net:18222`
+
+## 依赖
+| 依赖 | 用途 |
+|---|---|
+| kotlin-stdlib 1.9.0 | 语言运行时 |
+| zxing core 3.5.3 | 扫码解码 |
+| bitcoinj-core 0.16.1 | BIP39/BIP44 助记词派生 |
+| okhttp 4.12.0 | HTTP 请求 |
+| reown walletkit 1.0.3 | WalletConnect 协议 |
+| androidsvg-aar 1.4 | SVG 运行时渲染 |
+| swiperefreshlayout 1.1.0 | 下拉刷新 |
 
 ## 构建
 ```bash
 cd XiaoHeiBitWallet
-export JAVA_HOME=/home/user/jdk-17.0.2 ANDROID_HOME=~/android-sdk \
-       PATH=$JAVA_HOME/bin:$PATH:/home/user/gradle-8.3/bin
-gradle assembleDebug      # 产物 app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
-gradle assembleRelease    # 产物 app/build/outputs/apk/release/app-arm64-v8a-release.apk（更小，已用 debug 签名）
+export JAVA_HOME=/home/user/jdk-17.0.2
+export ANDROID_HOME=/home/user/android-sdk
+/home/user/gradle-8.3/bin/gradle assembleRelease
+# 产物: app/build/outputs/apk/release/app-*-release.apk
 ```
-部署：APK 上传到测试网 `~/xiaoheibit测试/tmp/xhb-wallet.apk`。
 
 ## 代码结构（每个功能独立文件）
 | 文件 | 职责 |
 |---|---|
-| `Theme.kt` | `App`（全局 Context）、配色 `C`（与 webui CSS 变量一致）、dp/sp 扩展 |
-| `Api.kt` | HTTP 封装 + 全部后端接口；`State` 全局数据与 3 秒刷新 |
-| `QrCode.kt` | **零依赖手写二维码**（GF256+RS+矩阵，v1-6/EC=M/UTF-8/固定 mask0），算法已用 Python+cv2 对三种真实码解码验证 |
-| `Ui.kt` | 组件库：solid/blueGrad/tv/icon/按钮/输入框/二维码/设置行/分组，配色圆角对齐 webui |
-| `Nav.kt` | 单 Activity 多 page 路由、底部 sheet 弹窗、toast、io/ui 线程、IPFS 图加载 |
-| `TxViews.kt` | 交易列表按日期分组、搜索、收/发/挖矿图标与状态色块 |
-| `WalletSheets.kt` | 钱包管理/创建/备份助记词/导入/导出(私钥·助记词)/改名/发送/接收/挖矿/链状态 |
-| `WalletPages.kt` | 主页、币种详情(XHB)、交易记录页、购买/出售页 |
-| `NftPages.kt` | NFT 列表/详情/铸造/发送(一次性码+直接地址)/接收 |
-| `SettingsPages.kt` | 更多页(4 宫格)、设置页(3 组)、切换网络、自定义节点 |
-| `ScanActivity.kt` | 原生相机(Camera1)+ZXing 扫码，自动路由码类型 |
-| `MainActivity.kt` | 主框架：内容区+底部三 tab+弹窗层，注册全部页面并轮询刷新 |
+| `App.kt` | 全局 Context、应用入口 |
+| `MainActivity.kt` | 主框架：内容区+底部tab+弹窗层 |
+| `MainApp.kt` | 全局刷新调度 |
+| `Theme.kt` | 配色、dp/sp 扩展 |
+| `Ui.kt` | 组件库：按钮/输入框/设置行/分组 |
+| `Nav.kt` | 单 Activity 多 page 路由、sheet 弹窗、toast、io/ui 线程 |
+| `Api.kt` | HTTP 封装 + 后端接口；State 全局数据与轮询刷新 |
+| `RemoteConfig.kt` | 远程配置拉取（节点/汇率/手续费） |
+| `LocalWallet.kt` | 本地钱包存储（私有目录） |
+| `WalletStore.kt` | 钱包数据仓库 |
+| `MultiCoin.kt` | BIP39/BIP44 多币种地址派生 |
+| `CoinBalances.kt` | 多币种余额查询（XHB/TRX/BNB/USDT） |
+| `Trons.kt` | TRON 签名广播（r\|\|s\|\|v compact） |
+| `Bscs.kt` | BSC/BNB 签名广播（RLP+EIP-155） |
+| `FeeCollector.kt` | 手续费归集（达阈值自动转 owner） |
+| `SvgLoader.kt` | SVG 运行时加载（Bitmap渲染+LruCache+分类筛选+分页） |
+| `WalletPages.kt` | 主页、币种详情、交易记录 |
+| `WalletSheets.kt` | 钱包管理/创建/导入/改名/删除/头像选择器 |
+| `TxViews.kt` | 交易列表按日期分组、搜索 |
+| `NftPages.kt` | NFT 列表/详情/铸造/发送/接收 |
+| `DAppPages.kt` | DApp 浏览器 |
+| `SwapPages.kt` | 兑换页面 |
+| `WCPages.kt` | WalletConnect 会话管理 |
+| `WCCore.kt` / `WCCrypto.kt` / `WCRelay.kt` | WalletConnect 核心实现 |
+| `ReownWC.kt` | Reown SDK 封装 |
+| `SettingsPages.kt` | 设置页、切换网络、自定义节点 |
+| `ScanActivity.kt` | 原生相机+ZXing 扫码，自动路由码类型 |
+| `QrCode.kt` | 零依赖手写二维码生成 |
+| `Onboarding.kt` | 首次引导页（国旗+免责声明） |
+| `Rates.kt` | 汇率换算 |
+| `LogUtil.kt` | 日志工具 |
 
-## 页面/功能对照 webui
-- 底部三 tab：钱包 / 更多 / 设置（购买页隐藏 tabbar）
-- 主页：顶栏、居中大余额、发送/接收/购买/挖矿四圆钮、XHB 币种卡（**点整张卡**进详情，不是点箭头）
-- 币种详情：居中「50 HXB」、暂无行情、合约地址 16 个零、最近交易
-- 更多：DAPP(置灰·预留) / NFT / 制作NFT / 交换(置灰·预留)，一行两个
-- 设置：钱包管理、链状态、挖矿打包、偏好设置(预留)、更多(切网络)、链完整性校验(自动)、关于
-- 网络：主网 8222 / 测试网 8234 / 自定义节点；切换即改 baseUrl 并刷新（主网未动新功能，仅切端口）
-- NFT：2 列网格+空态；详情上方正方形 IPFS 图、下方信息；网关 `https://ipfs.thegraph.com/ipfs/<cid>`
-- 铸造表单字段：名称 / 图片(ipts)（提示"图片的ipts信息"）/ 发行量(默认1) / 描述可选
-- 发送 NFT：一次性码 tab（白底完整二维码，文字框只显示随机码，可复制）+ 直接发地址 tab；出售预留
-- 接收 NFT：在 NFT 页底部，可手输或扫码
+## 核心功能
 
-## 二维码格式（与 webui 完全一致）
-- 收款：`XiaoHeiBit$CollectMoney$<addr>$<ts>`
-- NFT 一次性：`XiaoHeiBit$Nft$<32位随机码>$<ts>`（UI 只显示 split('$')[2]）
-- 导出私钥：`XiaoHeiBit$leading-In$<priv>$<ts>`
-- DApp：`XiaoHeiBit$DApp$<url>`
-- 扫码路由：CollectMoney→发送页；leading-In→导入钱包；Nft→NFT 接收填码；纯地址→发送页
+### 多币种钱包
+- XHB（本地私有链）、TRX、BNB（BSC）、USDT(TRC20)
+- BIP39 12词助记词 + BIP44 派生，地址与主流钱包一致
+- 私钥存 APP 私有目录，本地签名，服务端仅验签
 
-## 图标
-- 20 个线性图标由 webui 的 `ico/*.svg`（Lucide 描边）批量转为 VectorDrawable `res/drawable/ic_*.xml`，运行时 tint 复刻 currentColor
-- 币种 logo：从 webui 内联 base64 提取为 `res/drawable/xhbit_logo.webp`
-- 应用图标：复用服务器 `tmp/icon.png` → `res/mipmap-hdpi/ic_launcher.png`（未重新生成）
+### SVG 头像系统
+- 1271 个渐变背景 SVG 图标运行时加载（assets/icons/）
+- 41 种图案 × 31 种渐变配色（Google/Telegram/X/品牌系/流行配色）
+- 5 个固定推荐头像（fixed_1~5.svg，透明背景+原生渐变）
+- 头像选择器：4 个推荐 + 「更多」页（分类筛选/网格每行3个/分页加载）
+- AndroidSVG 渲染为 Bitmap，LruCache 缓存（60个，128px）
+
+### WalletConnect
+- 基于 Reown SDK，支持连接 DApp
+- 会话管理页面
+
+### NFT
+- 列表/详情/铸造/发送（一次性码+直接地址）/接收
+- 二维码格式：`XiaoHeiBit$Nft$<32位随机码>$<ts>`
+
+### 手续费归集
+- 每笔固定 0.00001，累计达阈值自动转 owner 地址
+- 配置从 `/api/config` 读取
+
+## 二维码格式
+| 类型 | 格式 |
+|---|---|
+| 收款 | `XiaoHeiBit$CollectMoney$<addr>$<ts>` |
+| NFT 一次性 | `XiaoHeiBit$Nft$<32位随机码>$<ts>` |
+| 导出私钥 | `XiaoHeiBit$leading-In$<priv>$<ts>` |
+| DApp | `XiaoHeiBit$DApp$<url>` |
+
+## 网络
+- 公开主链：`http://cn-hk-bgp-4.ofalias.net:18222`（默认）
+- 主网：8222 / 测试网：8234 / 自定义节点
+- 设置→更多→切换网络
+
+## XHB 合约
+- 链：BSC
+- 合约：`0xE8775a5a985aF6765a9BE01a22B4A459A83bADBc`
+- 总量：1,000,000 XHB
 
 ## 已验证
-- release/debug 均构建通过；dex 含 MainActivity/ScanActivity/App/QrCode/ZXing QRCodeReader
-- 资源压缩后 logo、图标、启动图标均保留；包名/应用名/INTERNET+CAMERA 权限正确
-- QR 生成算法在 PC 端用三种真实码 cv2 解码通过
+- release 构建通过（arm64-v8a / armeabi-v7a / universal）
+- 多币种地址派生与 Gem Wallet 一致
+- TRX compact 签名、BNB EIP-155 签名已对接公链
+- SVG 头像渲染、选择器、分类筛选功能正常
 
-## 未做（按需求预留，后续再加）
-- 自绘密码锁（不用系统原生弹窗）
-- 扫码登录 / 导入钱包（10 分钟有效期、码内含设备信息）
-- 钱包文件与 APP 配置存私有 data 目录（当前仍服务端管钱包）
-- 主题切换；NFT 出售；DAPP；交换；购买真实下单（当前与 webui 同为演示 toast）
+## 未做（后续迭代）
+- USDT(TRC20) 发送
+- 兑换功能实际对接
+- 自绘密码锁
+- 扫码登录
+- 界面美化（原神/iOS风格）
 
 ## 已知限制
-- 云机无安卓模拟器，未做真机运行截图验证；首次装机请授予相机权限
+- 首次加载 SVG 图标库约 5MB，更多页分页加载（每页30个）
 - 局域网地址变更时，在 设置→更多→切换网络→自定义节点 修改
