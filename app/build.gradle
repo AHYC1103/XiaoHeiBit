@@ -20,14 +20,14 @@ allprojects {
     }
 }
 android {
-    namespace "com.xiaoheibit.wallets"
+    namespace "com.xiaoheicoin.wallet"
     compileSdk 34
     defaultConfig {
-        applicationId "com.xiaoheibit.wallets"
+        applicationId "com.xiaoheicoin.wallet"
         minSdk 26
         targetSdk 34
-        versionCode 216
-        versionName "v2026.10.01-10"
+        versionCode 253
+        versionName "v2026.10.11-6"
     }
     buildTypes {
         release {

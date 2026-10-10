@@ -8,7 +8,7 @@
 - 包名：`com.xiaoheibit.wallets`
 - minSdk 26 / targetSdk 34 / compileSdk 34
 - 多架构：arm64-v8a（18MB）、armeabi-v7a（17MB）、universal（28MB）
-- 默认连公开主链 `http://cn-hk-bgp-4.ofalias.net:18222`
+- 默认连 XiaoHeiChain 主网 `http://cn-hk-bgp-4.ofalias.net:18222`
 
 ## 依赖
 | 依赖 | 用途 |
@@ -68,7 +68,7 @@ export ANDROID_HOME=/home/user/android-sdk
 ## 核心功能
 
 ### 多币种钱包
-- XHB（本地私有链）、TRX、BNB（BSC）、USDT(TRC20)
+- XHB（XiaoHeiChain 自研链）、TRX、BNB（BSC）、USDT(TRC20)
 - BIP39 12词助记词 + BIP44 派生，地址与主流钱包一致
 - 私钥存 APP 私有目录，本地签名，服务端仅验签
 
@@ -100,7 +100,7 @@ export ANDROID_HOME=/home/user/android-sdk
 | DApp | `XiaoHeiBit$DApp$<url>` |
 
 ## 网络
-- 公开主链：`http://cn-hk-bgp-4.ofalias.net:18222`（默认）
+- XiaoHeiChain 主网：`http://cn-hk-bgp-4.ofalias.net:18222`（默认）
 - 主网：8222 / 测试网：8234 / 自定义节点
 - 设置→更多→切换网络
 

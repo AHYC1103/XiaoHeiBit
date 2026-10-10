@@ -1,8 +1,12 @@
-# XiaoHeiBit 小黑币
+# XiaoHeiCoin 小黑币
 
-从零手写的本地私有区块链 + 纯原生安卓钱包。后端 Python Flask，APP Kotlin 原生（非 WebView 套壳）。
+从零手写的自研区块链 + 纯原生安卓钱包。后端 Python Flask，APP Kotlin 原生（非 WebView 套壳）。
 
-[![version](https://img.shields.io/badge/version-v2026.10.01--10-blue)](https://github.com/AHYC1103/XiaoHeiBit/releases)
+- **链**：XiaoHeiChain（小黑链，PoW 共识）
+- **币**：XiaoHeiCoin，符号 XHB
+- **包名**：`com.xiaoheicoin.wallet`
+
+[![version](https://img.shields.io/badge/version-v2026.10.11--6-blue)](https://github.com/AHYC1103/XiaoHeiBit/releases)
 [![apk](https://img.shields.io/badge/APK-download-green)](https://github.com/AHYC1103/XiaoHeiBit/releases/latest)
 [![license](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
@@ -14,16 +18,15 @@
 |------|------|------|
 | arm64-v8a | 18MB | 大多数现代手机 |
 | armeabi-v7a | 17MB | 旧32位手机 |
-| universal | 28MB | 通用，都能装 |
 
 ## 功能特性
 
-- **手写区块链** — PoW 共识、secp256k1 签名验签、UTXO 模型，零第三方区块链依赖
-- **多链钱包** — XHB（本地私有链）/ TRON / BSC / USDT(TRC20)
+- **手写区块链** — XiaoHeiChain，PoW 共识、secp256k1 签名验签、UTXO 模型，零第三方区块链依赖
+- **多链钱包** — XHB（XiaoHeiChain 自研链）/ TRON / BSC / USDT(TRC20)
 - **BIP39 助记词** — BIP44 派生多地址，与主流钱包兼容
 - **本地签名** — 私钥存 APP 私有目录，服务端仅验签，不接触私钥
 - **SVG 头像系统** — 1271 个渐变背景图标运行时加载，分类筛选选择器
-- **真实公链广播** — TRX（r\|\|s\|\|v compact 签名）、BNB（RLP + EIP-155）
+- **真实公链广播** — TRX（r\\|\\|s\\|\\|v compact 签名）、BNB（RLP + EIP-155）
 - **NFT** — 铸造 / 发送 / 接收 / 列表 / 详情，IPFS 图片预览，一次性二维码
 - **兑换 & 购买** — 多币种兑换 UI，CNY 计价
 - **扫码** — 收款码 / NFT 码 / 地址扫码导入
@@ -33,13 +36,12 @@
 - **远程配置** — 节点/汇率/手续费/阈值全从服务端 /api/config 读取
 - **首次引导页** — 免责声明
 
-## XHB 合约
+## XHB 合约（Polygon/BSC）
 
-- **链**：BSC (Binance Smart Chain)
 - **合约**：`0xE8775a5a985aF6765a9BE01a22B4A459A83bADBc`
 - **总量**：1,000,000 XHB
 - **区块**：94530751
-- [BSC Scan 查看](https://bscscan.com/token/0xE8775a5a985aF6765a9BE01a22B4A459A83bADBc)
+- 与 XiaoHeiChain 自研链相互独立
 
 ## 快速开始
 
@@ -65,13 +67,13 @@ export ANDROID_HOME=/home/user/android-sdk
 
 ## 网络
 
-- 公开主链：`http://cn-hk-bgp-4.ofalias.net:18222`（frp 隧道，默认）
+- XiaoHeiChain 主网：`http://cn-hk-bgp-4.ofalias.net:18222`（frp 隧道，默认）
 - 主网端口：8222（树莓派 7x24 运行）
 - 测试网端口：8234（本地）
 
 ## 部署
 
-主链运行在树莓派（Arch Linux）上，systemd user service 自启：
+主链（XiaoHeiChain）运行在树莓派（Arch Linux）上，systemd user service 自启：
 - `xiaoheibit.service`：Python Flask 后端
 - `frpc.service`：frp 内网穿透
 
@@ -143,14 +145,14 @@ export ANDROID_HOME=/home/user/android-sdk
 
 | 类型 | 格式 |
 |---|---|
-| 收款 | `XiaoHeiBit$CollectMoney$<addr>$<ts>` |
-| NFT 一次性 | `XiaoHeiBit$Nft$<32位随机码>$<ts>` |
-| 导出私钥 | `XiaoHeiBit$leading-In$<priv>$<ts>` |
-| DApp | `XiaoHeiBit$DApp$<url>` |
+| 收款 | `XiaoHeiCoin$CollectMoney$<addr>$<ts>` |
+| NFT 一次性 | `XiaoHeiCoin$Nft$<32位随机码>$<ts>` |
+| 导出私钥 | `XiaoHeiCoin$leading-In$<priv>$<ts>` |
+| DApp | `XiaoHeiCoin$DApp$<url>` |
 
 ## 关键技术细节
 
-- **TRX 签名**：r(32)\|\|s(32)\|\|v(1) = 65字节 compact，v 在最后
+- **TRX 签名**：r(32)\\|\\|s(32)\\|\\|v(1) = 65字节 compact，v 在最后
 - **BNB 签名**：EIP-155，chainId=56，v=147+recid，RLP 编码手写
 - **BSC 地址**：keccak256(未压缩公钥后64字节)[12:]，EIP-55 校验和
 - **TRON 地址**：keccak256 → 0x41 前缀 → SHA256x2 校验 → base58
@@ -174,13 +176,13 @@ xiaoheibit/              # 后端 Python
     └── migrate.py       # 旧数据迁移
 
 XiaoHeiBitWallet/        # 安卓 APP
-├── app/src/main/java/com/xiaoheibit/wallets/   # 34个Kotlin文件
-└── app/src/main/assets/icons/                  # 1271+ 个 SVG 头像
+├── app/src/main/java/com/xiaoheicoin/wallet/   # Kotlin 源码
+└── app/src/main/assets/icons/                    # 1271+ 个 SVG 头像
 ```
 
 ## 已验证
 
-- release 构建通过（arm64-v8a / armeabi-v7a / universal）
+- release 构建通过（arm64-v8a / armeabi-v7a）
 - 多币种地址派生与 Gem Wallet 一致
 - TRX compact 签名、BNB EIP-155 签名已对接公链
 - SVG 头像渲染、选择器、分类筛选功能正常
@@ -191,7 +193,7 @@ XiaoHeiBitWallet/        # 安卓 APP
 - 兑换功能实际对接
 - 自绘密码锁
 - 扫码登录
-- 界面美化（原神/iOS风格）
+- 界面美化
 
 ## 已知限制
 

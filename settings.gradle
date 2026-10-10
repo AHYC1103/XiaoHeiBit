@@ -1,2 +1,2 @@
-rootProject.name = "XiaoHeiBitWallet"
+rootProject.name = "XiaoHeiCoinWallet"
 include ":app"
