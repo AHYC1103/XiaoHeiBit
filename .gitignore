@@ -1,0 +1,39 @@
+# Android / Gradle
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/app/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+*.hprof
+*.apk
+*.aab
+.kotlin/
+
+# Python / 后端
+__pycache__/
+*.pyc
+*.pyo
+chain.db
+chain.db-wal
+chain.db-shm
+transfer.db
+transfer.db-wal
+transfer.db-shm
+nft.db
+nft.db-wal
+nft.db-shm
+wallets.json
+wallets.json.bak
+venv/
+.venv/
+
+# 临时
+tmp/
+mnt/
+*.log

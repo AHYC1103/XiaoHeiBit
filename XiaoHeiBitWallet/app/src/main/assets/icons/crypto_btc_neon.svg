@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <linearGradient id="bggrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5A0" />
+      <stop offset="100%" stop-color="#00D9F5" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="500" cy="500" r="500" fill="url(#bggrad)" />
+  <text x="500" y="740" font-family="Arial, sans-serif" font-size="580" font-weight="900" fill="#ffffff" text-anchor="middle" stroke="none">₿</text>
+  </svg>

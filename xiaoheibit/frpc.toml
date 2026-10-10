@@ -1,0 +1,29 @@
+serverAddr = 'cn-hk-bgp-4.ofalias.net'
+serverPort = 8120
+user = 'a6d1fbc53ae0e30ca19947fb7b6e2a5a'
+
+[auth]
+method = 'token'
+token = 'jAY6ATEUkBZlluDK'
+
+[[proxies]]
+localIP = '127.0.0.1'
+localPort = 22
+name = 'BV1O7C7'
+remotePort = 50044
+type = 'tcp'
+
+[[proxies]]
+localIP = '127.0.0.1'
+localPort = 8222
+name = 'xiaoheichain'
+remotePort = 18222
+type = 'tcp'
+
+[transport]
+protocol = 'tcp'
+
+[transport.tls]
+disableCustomTLSFirstByte = false
+enable = true
+serverName = 'n29d19.openfrp.net'

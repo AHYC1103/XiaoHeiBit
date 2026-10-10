@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <linearGradient id="bggrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5A0" />
+      <stop offset="100%" stop-color="#00D9F5" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="500" cy="500" r="500" fill="url(#bggrad)" />
+  <ellipse cx="280" cy="420" rx="70" ry="140" fill="#ffffff" stroke="none" transform="translate(0,25)" />
+    <ellipse cx="720" cy="420" rx="70" ry="140" fill="#ffffff" stroke="none" transform="translate(0,25)" />
+    <circle cx="500" cy="520" r="250" fill="#ffffff" stroke="none" transform="translate(0,25)" />
+    <circle cx="410" cy="470" r="28" fill="#ffffff" stroke="none" transform="translate(0,25)" />
+    <circle cx="590" cy="470" r="28" fill="#ffffff" stroke="none" transform="translate(0,25)" />
+    <ellipse cx="500" cy="560" rx="50" ry="38" fill="#ffffff" stroke="none" transform="translate(0,25)" />
+    <path d="M500 598 L500 640" stroke="#ffffff" stroke-width="11" stroke-linecap="butt" fill="#ffffff" transform="translate(0,25)" />
+    <path d="M430 660 Q500 710 570 660" stroke="#ffffff" stroke-width="11" fill="none" stroke-linecap="butt" transform="translate(0,25)" />
+  </svg>

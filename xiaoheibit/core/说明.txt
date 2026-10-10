@@ -1,0 +1,26 @@
+core/ - 区块链核心包
+====================
+
+文件说明：
+├── __init__.py      包入口，re-export所有公开接口 + init_db()建表
+├── config.py        配置常量（路径/默认值）+ load_config()读config.json
+├── utils.py         地址校验、区块哈希、交易哈希、交易规范化
+├── wallet.py        Wallet类（密钥对/签名）+ 多钱包CRUD + BIP39助记词
+├── transaction.py   交易字段校验、签名验证、余额检查、入mempool
+├── blockchain.py    余额计算、创世块、PoW挖矿、区块查询、交易历史、链校验
+├── migrate.py       旧chain.json迁移到SQLite
+├── api.py           Flask后端路由（HTTP API）
+├── chain.db         SQLite账本（自动生成）
+├── chain.db-wal     WAL日志（自动）
+└── chain.db-shm     共享内存（自动）
+
+wallet.py 新增功能（v0.2.0）：
+- generate_mnemonic() 生成BIP39标准12词助记词
+- mnemonic_to_private_key() 助记词转私钥
+- create_wallet_with_mnemonic() 用助记词创建新钱包
+- import_wallet_with_mnemonic() 导入助记词钱包
+
+依赖关系：
+config <- utils <- wallet <- transaction <- blockchain
+                  ^           ^
+                  +-----------+
